@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
 
     // Guardar la sala en el registro de salas
     rooms.push({ roomId: newRoom, users: [user1, user2] });
-    console.log(`🛋️ Sala creada: ${newRoom} con usuarios: ${user1}, ${user2}`);
+    console_log(`🛋️ Sala creada: ${newRoom} con usuarios: ${user1}, ${user2}`);
 
     waitingUsers = [];
   }
