@@ -33,7 +33,7 @@ RealTimeChat es una aplicación de chat en tiempo real que permite a los usuario
 1. Clona este repositorio:
 
    ```bash
-   git clone https://github.com/tu-usuario/realtimechat.git
+   git clone https://github.com/Joel-RD/RealTimeChat.git
    cd realtimechat
    ```
 
