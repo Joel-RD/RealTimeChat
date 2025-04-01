@@ -1,0 +1,47 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chat con Socket.IO</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"
+    integrity="sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <section class="absoluted-container">
+    <section class="allVideoCall">
+      <div id="remoteVideoContainer">
+        <video id="remoteVideo" autoplay></video>
+        <video id="localVideo" autoplay muted></video>
+        <button id="endCall">📵</button>
+      </div>
+    </section>
+    <section class="container_chat">
+      <section class="chat">
+        <h1 id="nameuser"">Chat: <span id="name-user"></span></h1>
+        <ul id="messages"></ul>
+        <section class="container-input">
+          <form id="messages-form">
+            <div>
+              <label for="imageInput" class="custom-file-label">📷</label>
+              <input type="file" id="imageInput" name="file" accept="image/*" class="file-upload">
+              <button id="startCall">📞</button>
+            </div>
+            <p class="message-info"></p>
+            <input type="text" id="message-input" placeholder="Escribe un mensaje..." required>
+            <button id="send">Enviar</button>
+          </form>
+        </section>
+      </section>
+    </section>
+  </section>
+
+  <script src="client.js"></script>
+</body>
+
+</html>
