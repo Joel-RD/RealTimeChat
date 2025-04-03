@@ -1,5 +1,14 @@
 const socket = io();
 
+let userId = localStorage.getItem('userId');
+if (!userId) {
+  userId = `user-${Math.random().toString(36).substr(2, 9)}`
+  localStorage.setItem('userId', userId);
+};
+
+//Enviar el usuario al servidor.
+socket.emit("register", userId);
+
 let nameUser = prompt("Elija su nombre de usuario...");
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("messages-form");

@@ -22,6 +22,7 @@ const peerServer = ExpressPeerServer(server, {
 });
 
 const absolutedRoot = path.join(process.cwd(), "src", "public");
+
 //Middlewares
 app.use(express.static(absolutedRoot));
 app.use("/peerjs", peerServer);
@@ -30,27 +31,50 @@ app.get("/video", (req, res) => {
   res.sendFile(absolutedRoot + "\\videostream.html");
 });
 
+let connectedUsers = {};
 let waitingUsers = [];
 let rooms = [];
+
 io.on("connection", (socket) => {
   console_log("✅ Un usuario se ha conectado...");
 
-  waitingUsers.push(socket.id);
+  // Escuchar el identificador único del cliente
+  socket.on("register", (userId) => {
+    if (!userId) {
+      socket.emit("error", "Identificador de usuario no proporcionado.");
+      socket.disconnect();
+      return;
+    }
 
-  if (waitingUsers.length === 2) {
-    const newRoom = `ROOM-${randomUUID()}`;
-    const user1 = waitingUsers[0];
-    const user2 = waitingUsers[1];
+    // Verificar si el usuario ya está conectado
+    if (connectedUsers[userId]) {
+      console_log(`⚠️ Usuario ${userId} ya está conectado.`);
+      socket.emit("error", "Ya tienes una sesión activa.");
+      socket.disconnect(); // Desconectar al usuario duplicado
+      return;
+    }
 
-    io.sockets.sockets.get(user1).join(newRoom);
-    io.sockets.sockets.get(user2).join(newRoom);
+    // Registrar al usuario como conectado
+    connectedUsers[userId] = socket.id;
+    waitingUsers.push(socket.id);
 
-    // Guardar la sala en el registro de salas
-    rooms.push({ roomId: newRoom, users: [user1, user2] });
-    console_log(`🛋️ Sala creada: ${newRoom} con usuarios: ${user1}, ${user2}`);
+    if (waitingUsers.length === 2) {
+      const newRoom = `ROOM-${randomUUID()}`;
+      const user1 = waitingUsers[0];
+      const user2 = waitingUsers[1];
 
-    waitingUsers = [];
-  }
+      io.sockets.sockets.get(user1).join(newRoom);
+      io.sockets.sockets.get(user2).join(newRoom);
+
+      // Guardar la sala en el registro de salas
+      rooms.push({ roomId: newRoom, users: [user1, user2] });
+      console_log(
+        `🛋️ Sala creada: ${newRoom} con usuarios: ${user1}, ${user2}`
+      );
+
+      waitingUsers = [];
+    }
+  });
 
   socket.on("message", (message) => {
     const userRoom = rooms.find((room) => room.users.includes(socket.id));
@@ -99,6 +123,14 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console_log(`❌ Usuario ${socket.id} desconectado.`);
+
+    // Eliminar al usuario del registro de conectados
+    const userId = Object.keys(connectedUsers).find(
+      (key) => connectedUsers[key] === socket.id
+    );
+    if (userId) {
+      delete connectedUsers[userId];
+    }
 
     const userRoom = rooms.find((room) => room.users.includes(socket.id));
     if (userRoom) {
