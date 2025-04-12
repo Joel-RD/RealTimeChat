@@ -1,7 +1,7 @@
 import express from "express";
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
-import { config } from "../config.js";
+import { config } from "../dist/config.js";
 import path from "path";
 import { ExpressPeerServer } from "peer";
 import { randomUUID } from "crypto";
@@ -21,7 +21,7 @@ const peerServer = ExpressPeerServer(server, {
   debug: true,
 });
 
-const absolutedRoot = path.join(process.cwd(), "src", "public");
+const absolutedRoot = path.join(process.cwd(), "src", "public");-
 
 //Middlewares
 app.use(express.static(absolutedRoot));
