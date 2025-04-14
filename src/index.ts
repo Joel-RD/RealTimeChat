@@ -1,7 +1,7 @@
-import express from "express";
+import express, {Response, Request} from "express";
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
-import { config } from "../dist/config.js";
+import { config } from "../config.js";
 import path from "path";
 import { ExpressPeerServer } from "peer";
 import { randomUUID } from "crypto";
@@ -18,7 +18,7 @@ const io = new SocketIOServer(server, {
 });
 
 const peerServer = ExpressPeerServer(server, {
-  debug: true,
+  // debug: true,
 });
 
 const absolutedRoot = path.join(process.cwd(), "src", "public");-
@@ -27,19 +27,19 @@ const absolutedRoot = path.join(process.cwd(), "src", "public");-
 app.use(express.static(absolutedRoot));
 app.use("/peerjs", peerServer);
 
-app.get("/video", (req, res) => {
+app.get("/video", (req: Request, res: Response) => {
   res.sendFile(absolutedRoot + "\\videostream.html");
 });
 
-let connectedUsers = {};
-let waitingUsers = [];
-let rooms = [];
+let connectedUsers: Record<string, string> = {};
+let waitingUsers: string[] = [];
+let rooms: { roomId: string; users: string[] }[] = [];
 
 io.on("connection", (socket) => {
   console_log("✅ Un usuario se ha conectado...");
 
   // Escuchar el identificador único del cliente
-  socket.on("register", (userId) => {
+  socket.on("register", (userId):void => {
     if (!userId) {
       socket.emit("error", "Identificador de usuario no proporcionado.");
       socket.disconnect();
@@ -76,14 +76,14 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("message", (message) => {
+  socket.on("message", (message):void => {
     const userRoom = rooms.find((room) => room.users.includes(socket.id));
     if (userRoom) {
       socket.to(userRoom.roomId).emit("message", message);
     }
   });
 
-  socket.on("image", (base64Image) => {
+  socket.on("image", (base64Image):void => {
     const userRoom = rooms.find((room) => room.users.includes(socket.id));
     if (userRoom) {
       socket.to(userRoom.roomId).emit("image", base64Image);
@@ -91,14 +91,14 @@ io.on("connection", (socket) => {
   });
 
   // Manejo de señalización para WebRTC
-  socket.on("webrtc-offer", (offer) => {
+  socket.on("webrtc-offer", (offer):void => {
     const userRoom = rooms.find((room) => room.users.includes(socket.id));
     if (userRoom) {
       socket.to(userRoom.roomId).emit("webrtc-offer", offer);
     }
   });
 
-  socket.on("webrtc-answer", (answer) => {
+  socket.on("webrtc-answer", (answer):void => {
     const userRoom = rooms.find((room) => room.users.includes(socket.id));
     if (userRoom) {
       if (userRoom) {
@@ -107,21 +107,21 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("webrtc-ice-candidate", (candidate) => {
+  socket.on("webrtc-ice-candidate", (candidate):void => {
     const userRoom = rooms.find((room) => room.users.includes(socket.id));
     if (userRoom) {
       socket.to(userRoom.roomId).emit("webrtc-ice-candidate", candidate);
     }
   });
 
-  socket.on("call-ended", () => {
+  socket.on("call-ended", ():void => {
     const userRoom = rooms.find((room) => room.users.includes(socket.id));
     if (userRoom) {
       socket.to(userRoom.roomId).emit("call-ended");
     }
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", ():void => {
     console_log(`❌ Usuario ${socket.id} desconectado.`);
 
     // Eliminar al usuario del registro de conectados
@@ -151,7 +151,7 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(PORT_SERVER, () => {
+server.listen(PORT_SERVER, ():void => {
   console_log(`Server on port ${PORT_SERVER}`);
   console_log(`URL: ` + URL_LOCAL + "" + PORT_SERVER);
 });
