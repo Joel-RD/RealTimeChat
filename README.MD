@@ -2,7 +2,7 @@
 
 ![Descripción de la imagen](/file/logo.png)
 
-RealTimeChat es una aplicación de chat en tiempo real que permite a los usuarios enviar mensajes, compartir imágenes y realizar videollamadas utilizando tecnologías como **Socket.IO**, **WebRTC** y **PeerJS**.
+Real Time Chat es una aplicación de chat en tiempo real que permite a los usuarios enviar mensajes, compartir imágenes y realizar videollamadas utilizando tecnologías como **Socket.IO**, **WebRTC** y **PeerJS**.
 
 ## Características
 
