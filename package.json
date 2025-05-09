@@ -4,8 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch --env-file=.env dist/src/index.js",
+    "start": "node --env-file=.env dist/src/index.js",
+    "dev": "tsc && node --watch --env-file=.env dist/src/index.js",
     "build": "tsc"
   },
   "keywords": [],
