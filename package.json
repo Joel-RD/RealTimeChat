@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env dist/src/index.js",
+    "start": "node dist/src/index.js",
     "dev": "tsc && node --watch --env-file=.env dist/src/index.js",
     "build": "tsc"
   },
